@@ -59,7 +59,7 @@ Pkg.activate()
 md" **Laden der Daten und Beseitigung fehlender Daten**"
 
 # ╔═╡ 6652ebf4-3096-11eb-2906-61aa0012fbea
-suedwest_weather = CSV.File("./data/dwd_hist_weather.csv") |> DataFrame;
+suedwest_weather = CSV.File("./dwd_hist_weather.csv") |> DataFrame;
 
 # ╔═╡ 13b0b6ba-30a0-11eb-20b5-c969e54a0600
 replace!(suedwest_weather.Snow, -999 => 0);
