@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.12
+# v0.12.14
 
 using Markdown
 using InteractiveUtils
@@ -13,11 +13,20 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 075ae186-3096-11eb-3d69-418304b77f42
-using Pkg
-
 # ╔═╡ 3c3df92c-3096-11eb-2a26-3fc7062e9a71
-using DataFrames, CSV, Statistics, Dates,  PlutoUI
+begin
+	import Pkg
+	Pkg.activate(mktempdir())
+	Pkg.add([
+		"Statistics",
+		"PlutoUI",
+		"Dates",
+		"CSV",
+		"DataFrames",
+		"Query",
+	])
+	using CSV, DataFrames, Dates, PlutoUI, Query, Statistics
+end
 
 # ╔═╡ 0e8c7c7c-30a9-11eb-1b63-5b0db0474b5e
 md" # Weiße Weihnachten"
@@ -52,9 +61,6 @@ md" ## Los geht's"
 # ╔═╡ 0803770c-30b5-11eb-1e9f-6331f54b715c
 md" **Vorbereitung der IDE und Laden notwendiger Bibliotheken**"
 
-# ╔═╡ 1477dfcc-3096-11eb-2495-4546658120e7
-Pkg.activate()
-
 # ╔═╡ 1dc5a1b6-309d-11eb-1473-572e732137d1
 md" **Laden der Daten und Beseitigung fehlender Daten**"
 
@@ -73,7 +79,7 @@ md" **Selektion der Daten**
 data1 = filter(:Year => >=(1990), suedwest_weather)
 
 # ╔═╡ cbbf0e16-3097-11eb-3d3f-b51eb0c55188
-data2 = filter(:Month => ==(12), data1)
+data3 = filter(:Month => ==(12), data1)
 
 # ╔═╡ 2706134e-30bb-11eb-253d-7bf6c9c72a06
 md" **Löschen von Station die keine relevanten Daten enthalten.**
@@ -83,10 +89,7 @@ md" **Löschen von Station die keine relevanten Daten enthalten.**
 **Also Weg Damit!**"
 
 # ╔═╡ 70cb316c-30b8-11eb-065d-9fed0bead62b
-begin
-	data2[data2[:Station_ID].!=3096,:]
-	data2[data2[:Station_ID].!=7330,:]
-end;
+data4 = data3 |> @filter((_.Station_ID != 3096) .& (_.Station_ID != 7330) ) |> DataFrame;
 
 # ╔═╡ 16d52bba-30b6-11eb-3511-5513381f6e02
 
@@ -95,7 +98,7 @@ end;
 md" **Hinzufügen einer neuen Spalte >Day< um anschießend den 24.12 separieren zu können**"
 
 # ╔═╡ f97a44f6-3097-11eb-3399-59cb8ae9f1a4
-data2[!, :Day] = day.(data2[!, :Date])
+data4[!, :Day] = day.(data4[!, :Date])
 
 # ╔═╡ e159b87e-30c0-11eb-0971-c5c2c20edea2
 
@@ -104,7 +107,7 @@ data2[!, :Day] = day.(data2[!, :Date])
 md" **Selektion des 24. Dezember**"
 
 # ╔═╡ 3977ae86-3098-11eb-3078-b702d4abb2fa
-whiteCh = filter(:Day => ==(24), data2)
+whiteCh = filter(:Day => ==(24), data4)
 
 # ╔═╡ 097f313e-30c2-11eb-001b-b9234bc8dc5e
 
@@ -134,8 +137,8 @@ md" **Im Durchschnitt der betrachteten Periode liegt zu Weihnachten and den Stat
 * 6264 ==> Brilon-Thülen  
 * 13713 => Meinerzhagen-Redlendorf "  
 
-# ╔═╡ 64f9ffe2-3099-11eb-33fd-e78883ede319
-combine(whiteChStation, :Snow => mean)
+# ╔═╡ 564bb57a-317e-11eb-03a6-976e23b34826
+ combine(whiteChStation, :Snow => mean)
 
 # ╔═╡ f8ed0b5a-30c0-11eb-31dc-c5d1737e5a8c
 md" ## Interaktive Elemente
@@ -156,7 +159,6 @@ und
 					"4127" => "Reichshof-Eckenhagen",
 					"3098" => "Lüdenscheid",
 					"6264" => "Brilon-Thülen",
-					"7330" => "Arnsberg-Neheim",
 					"13713" => "Meinerzhagen-Redlendorf"])
 
 # ╔═╡ b6c17134-30a6-11eb-1b05-476cb6a00295
@@ -215,8 +217,6 @@ end
 # ╟─05570c7a-30b4-11eb-3c30-31c79f0b79de
 # ╟─349de516-30b5-11eb-367b-01bd51569fdf
 # ╟─0803770c-30b5-11eb-1e9f-6331f54b715c
-# ╠═075ae186-3096-11eb-3d69-418304b77f42
-# ╠═1477dfcc-3096-11eb-2495-4546658120e7
 # ╠═3c3df92c-3096-11eb-2a26-3fc7062e9a71
 # ╟─1dc5a1b6-309d-11eb-1473-572e732137d1
 # ╠═6652ebf4-3096-11eb-2906-61aa0012fbea
@@ -238,7 +238,7 @@ end
 # ╠═6e2e3816-3098-11eb-11d0-53319c74598f
 # ╠═ec584f94-3098-11eb-05a4-730534c16d23
 # ╟─139c4512-30c2-11eb-1b2c-572e9ad57dad
-# ╟─64f9ffe2-3099-11eb-33fd-e78883ede319
+# ╠═564bb57a-317e-11eb-03a6-976e23b34826
 # ╟─f8ed0b5a-30c0-11eb-31dc-c5d1737e5a8c
 # ╟─3d04a9d0-30a4-11eb-10cd-a10d1b0a5657
 # ╟─b6c17134-30a6-11eb-1b05-476cb6a00295
