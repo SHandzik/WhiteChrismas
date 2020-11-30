@@ -19,4 +19,4 @@ Als Datengrundlage dienen aufzeichnungen des Deutschen Wetterdienstes die über 
 
 Viel Spaß :tada: :octocat:
 
-Binder für WhiteChristmas [![WhitChristmas](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/SHandzik/WhiteChrismas/main?urlpath=pluto/open?path=WhiteChristmas.jl)
+
